@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</h:head>
+<f:view locale="#{students.region}"></f:view>
+<h:body class="bg-dark">
+    <div class=" p-3 d-flex flex-wrap align-items-center  justify-content-between  text-white" >
+    <h2><h:outputText value="#{msg.header}"/></h2>
+        <h:form>
+    <h:commandButton class="btn btn-light" action="#{students.switchregion()}" value="#{msg.region}"/>
+        </h:form>
+    </div>
+    <h:form>
+    <h:dataTable value="#{students.currentList()}" var="std" class="table table-dark table-striped">
+        <h:column >
+            <f:facet name="header"> <h:outputText value="#{msg.nom}"/> </f:facet>
+            <h:outputText  value="#{std.first_name}" rendered="#{std.email ne students.selectedStd.email}"/>
+            <h:inputText value="#{students.selectedStd.first_name}" rendered="#{std.email eq students.selectedStd.email}" required="true" />
+        </h:column>
+        <h:column>
+            <f:facet name="header"> Age </f:facet>
+            <h:outputText value="#{std.age}" rendered="#{std.email ne students.selectedStd.email}"/>
+            <h:inputText value="#{students.selectedStd.age}" rendered="#{std.email eq students.selectedStd.email}" required="true" />
+        </h:column>
+        <h:column>
+            <f:facet name="header"> Email </f:facet>
+            <h:outputText value="#{std.email}" rendered="#{std.email ne students.selectedStd.email}"/>
+            <h:inputText value="#{students.selectedStd.email}" rendered="#{std.email eq students.selectedStd.email}" required="true" />
+        </h:column>
+        <h:column>
+            <f:facet name="header"> <h:outputText value="#{msg.actions}"/> </f:facet>
+            <h:commandButton class="btn btn-primary me-2" value="#{msg.edit}" action="#{students.setSelectedStd(std)}" rendered="#{std.email ne students.selectedStd.email}" />
+            <h:commandButton class="btn btn-success" value="#{msg.confirm}" action="#{students.editStudent(students.selectedStd)}" rendered="#{std.email eq students.selectedStd.email}" />
+            <h:commandButton class="btn btn-danger" value=" #{msg.delete} " action="#{students.deleteStudent(std.id)}" rendered="#{std.email ne students.selectedStd.email}"/>
+        </h:column>
+    </h:dataTable>
+
+<div class="d-flex justify-content-center">
+            <h:commandButton class="btn btn-secondary me-1" value="&lt;&lt; #{msg.first}" action="#{students.setCurrentPage(1)}" rendered="#{students.currentPage gt 1}" />
+            <h:commandButton class="btn btn-primary me-1" value="&lt; #{msg.prev}" action="#{students.previousPage()}" rendered="#{students.currentPage gt 1}" />
+            <h:commandButton class="btn btn-primary me-1" value="#{msg.next} &gt;" action="#{students.nextPage()}" rendered="#{students.currentPage lt students.totalpages}" />
+            <h:commandButton class="btn btn-secondary me-1" value="#{msg.last} &gt;&gt;" action="#{students.setCurrentPage(students.totalpages)}" rendered="#{students.currentPage lt students.totalpages}" />
+</div>
+        &nbsp;&nbsp;<h:commandButton class="btn btn-primary" value=" #{msg.add} " action="#{students.showAddForm()}" rendered="#{students.selectedStd eq null and students.addForm eq false}"/>
+    </h:form>
+
+        <h:form class="d-flex justify-content-center text-white">
+            <br/>
+            <h:panelGrid columns="2" rendered="#{students.addForm}" >
+
+                <h:outputLabel class="form-label" for="firstName"><h:outputText value="#{msg.nom}"/> :</h:outputLabel>
+                <br/>
+                <h:inputText class="form-control" id="firstName" value="#{students.newStudent.first_name}" required="true" />
+                <br/>
+                <h:message for="firstName"/>
+                <br/>
+                <h:outputLabel class="form-label" for="age">Age:</h:outputLabel>
+                <br/>
+                <h:inputText class="form-control" id="age" value="#{students.newStudent.age}" required="true"/>
+                <br/>
+                <h:message for="age"/>
+                <br/>
+                <h:outputLabel class="form-label" for="email">Email:</h:outputLabel>
+                <br/>
+                <h:inputText class="form-control" id="email" value="#{students.newStudent.email}" required="true"  >
+                    <f:validator validatorId="valid"></f:validator>
+                </h:inputText>
+                <br/>
+                <h:messages for="email"/>
+                <br/>
+                <h:commandButton class="btn btn-primary" value="#{msg.save}" action="#{students.addStudent()}" />
+                <br/>
+            </h:panelGrid>
+
+            <h:outputText value=" Error : #{students.error}."  rendered="#{students.error ne null}"></h:outputText>
+        </h:form>
+</h:body>
+</html>
